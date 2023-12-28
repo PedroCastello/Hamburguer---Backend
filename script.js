@@ -42,6 +42,10 @@ app.get("/orders",log, (request, response) => {
   return response.json(orders);
 });
 
+app.get("/orders/:id",log, (request, response) => {
+  return response.json(orders);
+});
+
 app.post("/orders", log, (request, response) => {
   const { Order, ClientName, Price } = request.body;
 
