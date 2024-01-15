@@ -1,15 +1,16 @@
 const express = require("express");
 const app = express();
 const uuid = require("uuid");
-const PORT = 3006;
-
+const PORT = 3001;
+const cors = require("cors");
+app.use(express.json());
+app.use(cors());
 
 app.use(express.json());
 
 app.listen(PORT, () => {
   console.log(`👾 Servidor rodando na porta:${PORT}`);
 });
-
 
 const log = (request, response, next) => {
   const method = request.method;
@@ -19,8 +20,6 @@ const log = (request, response, next) => {
 
   next();
 };
-
-
 
 const orders = [];
 
@@ -38,36 +37,36 @@ const checkOrderId = (request, response, next) => {
   next();
 };
 
-app.get("/orders",log, (request, response) => {
+app.get("/orders", log, (request, response) => {
   return response.json(orders);
 });
 
-app.get("/orders/:id",log, (request, response) => {
+app.get("/orders/:id", log, (request, response) => {
   return response.json(orders);
 });
 
 app.post("/orders", log, (request, response) => {
-  const { Order, ClientName, Price } = request.body;
+  const { Order, ClientName } = request.body;
 
-  const order = { id: uuid.v4(), Order, ClientName, Price };
+  const order = { id: uuid.v4(), Order, ClientName };
 
   orders.push(order);
 
   return response.status(201).json(orders);
 });
 
-app.put("/orders/:id", checkOrderId,log, (request, response) => {
-  const { Order, ClientName, Price } = request.body;
+app.put("/orders/:id", checkOrderId, log, (request, response) => {
+  const { Order, ClientName } = request.body;
   const index = request.orderIndex;
   const id = request.orderId;
-  const updatedOrder = { id, Order, ClientName, Price };
+  const updatedOrder = { id, Order, ClientName };
 
   orders[index] = updatedOrder;
 
   return response.json(updatedOrder);
 });
 
-app.delete("/orders/:id", checkOrderId,log, (request, response) => {
+app.delete("/orders/:id", checkOrderId, log, (request, response) => {
   const index = request.orderIndex;
 
   orders.splice(index, 1);
@@ -75,7 +74,7 @@ app.delete("/orders/:id", checkOrderId,log, (request, response) => {
   return response.status(204).json(orders);
 });
 
-app.patch("/orders/:id", checkOrderId,log, (request, response) => {
+app.patch("/orders/:id", checkOrderId, log, (request, response) => {
   const { orderId } = request;
 
   orders[request.orderIndex].status = "pronto";
